@@ -1,24 +1,61 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from './components/ui/sonner';
+import Layout from './components/Layout';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import POSPage from './pages/POSPage';
+import ProductsPage from './pages/ProductsPage';
+import InventoryPage from './pages/InventoryPage';
+import CustomersPage from './pages/CustomersPage';
+import ReceiptVoucherPage from './pages/ReceiptVoucherPage';
+import InvoicesPage from './pages/InvoicesPage';
+import AccountingPage from './pages/AccountingPage';
+import EmployeesPage from './pages/EmployeesPage';
+import UsersPage from './pages/UsersPage';
+import ReportsPage from './pages/ReportsPage';
+import SettingsPage from './pages/SettingsPage';
+import DynamicControlPage from './pages/DynamicControlPage';
+import BarcodePage from './pages/BarcodePage';
+import SalesReturnPage from './pages/SalesReturnPage';
 
-// واجهة مؤقتة لتأكيد عمل النظام
-const SimpleDashboard = () => (
-  <div style={{ padding: '20px', textAlign: 'center', fontFamily: 'Arial' }}>
-    <h1 style={{ color: '#2563eb' }}>نظام أيمن سوفت - Ayman Soft</h1>
-    <p>تم تفعيل النظام بنجاح وتخطي عقبات الملفات المفقودة.</p>
-    <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
-      <button style={{ padding: '10px', backgroundColor: '#eee', border: '1px solid #ccc' }}>نقطة البيع - POS</button>
-      <button style={{ padding: '10px', backgroundColor: '#eee', border: '1px solid #ccc' }}>المخزن - Inventory</button>
-    </div>
-  </div>
-);
+// محاكاة مستخدم "أيمن سوفت" لضمان الدخول المباشر
+const user = { id: '1', name: 'Ayman Al-Himyari', role: 'admin' };
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  // تخطي الحماية مؤقتاً لضمان عمل الرابط
+  return user ? <>{children}</> : <Navigate to="/login" replace />;
+}
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
+      <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+        <Route index element={<DashboardPage />} />
+        <Route path="pos" element={<POSPage />} />
+        <Route path="products" element={<ProductsPage />} />
+        <Route path="inventory" element={<InventoryPage />} />
+        <Route path="customers" element={<CustomersPage />} />
+        <Route path="receipt-voucher" element={<ReceiptVoucherPage />} />
+        <Route path="invoices" element={<InvoicesPage />} />
+        <Route path="sales-return" element={<SalesReturnPage />} />
+        <Route path="accounting" element={<AccountingPage />} />
+        <Route path="employees" element={<EmployeesPage />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="reports" element={<ReportsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+        <Route path="dynamic-control" element={<DynamicControlPage />} />
+        <Route path="barcodes" element={<BarcodePage />} />
+      </Route>
+    </Routes>
+  );
+}
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<SimpleDashboard />} />
-        <Route path="*" element={<SimpleDashboard />} />
-      </Routes>
+      <AppRoutes />
+      <Toaster />
     </BrowserRouter>
   );
 }
