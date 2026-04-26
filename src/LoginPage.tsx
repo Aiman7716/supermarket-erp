@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+//import { useAuth } from '@/contexts/AuthContext';
 import { LogIn, ShieldCheck } from 'lucide-react';
-import { toast } from 'sonner';
+//import { toast } from 'sonner';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
