@@ -20,7 +20,7 @@ import BarcodePage from './pages/BarcodePage';
 import SalesReturnPage from './pages/SalesReturnPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
- const { user } = useAuth();
+// const { user } = useAuth();
  return user ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
