@@ -1,52 +1,104 @@
 import { BrowserRouter, Routes, Route, Link, Outlet } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-// --- التصميم الرئيسي (Layout) ---
+// --- الهوية البصرية والنظام الإنشائي (Layout) ---
 const Layout = () => (
-  <div style={{ display: 'flex', minHeight: '100vh', direction: 'rtl', fontFamily: 'Arial', backgroundColor: '#f0f2f5' }}>
-    <div style={{ width: '260px', backgroundColor: '#1a222d', color: 'white', padding: '20px', boxShadow: '2px 0 5px rgba(0,0,0,0.1)' }}>
-      <h2 style={{ borderBottom: '1px solid #303f50', paddingBottom: '10px' }}>أيمن سوفت</h2>
-      <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '25px' }}>
-        <Link to="/" style={navStyle}>🏠 لوحة التحكم</Link>
-        <Link to="/pos" style={navStyle}>💰 نقطة البيع (POS)</Link>
-        <Link to="/products" style={navStyle}>📦 إدارة المنتجات</Link>
-        <Link to="/inventory" style={navStyle}>📑 المخزون</Link>
-        <Link to="/reports" style={navStyle}>📊 التقارير</Link>
+  <div style={{ display: 'flex', minHeight: '100vh', direction: 'rtl', fontFamily: 'Arial', backgroundColor: '#f4f7fe' }}>
+    {/* القائمة الجانبية الذكية */}
+    <div style={{ width: '280px', backgroundColor: '#0f172a', color: 'white', padding: '25px', boxShadow: '4px 0 10px rgba(0,0,0,0.1)' }}>
+      <div style={{ paddingBottom: '20px', borderBottom: '1px solid #1e293b', marginBottom: '20px' }}>
+        <h2 style={{ color: '#38bdf8', margin: 0 }}>أيمن سوفت</h2>
+        <small style={{ color: '#94a3b8' }}>نظام الإدارة المتكامل</small>
+      </div>
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <Link to="/" style={navItemStyle}>🏠 لوحة التحكم</Link>
+        <Link to="/pos" style={navItemStyle}>💰 نقطة البيع (POS)</Link>
+        <Link to="/products" style={navItemStyle}>📦 الأصناف والمنتجات</Link>
+        <Link to="/inventory" style={navItemStyle}>📊 حركة المخزن</Link>
+        <Link to="/reports" style={navItemStyle}>📝 التقارير المالية</Link>
       </nav>
     </div>
-    <div style={{ flex: 1, padding: '25px' }}>
-      <header style={{ marginBottom: '20px', padding: '15px', backgroundColor: 'white', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-        <span style={{ fontWeight: 'bold' }}>مرحباً: أستاذ أيمن الهيمباري</span>
-        <span style={{ color: '#666' }}>{new Date().toLocaleDateString('ar-YE')}</span>
+
+    {/* منطقة العمل الرئيسية */}
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <header style={{ height: '70px', backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 30px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+        <div style={{ fontWeight: 'bold', color: '#1e293b' }}>مرحباً بك: أستاذ أيمن الهيمباري</div>
+        <div style={{ color: '#64748b' }}>{new Date().toLocaleDateString('ar-YE')}</div>
       </header>
-      <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '10px', minHeight: '80vh', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-        <Outlet />
-      </div>
+      <main style={{ padding: '30px', flex: 1 }}>
+        <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '25px', minHeight: '80vh', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+          <Outlet />
+        </div>
+      </main>
     </div>
   </div>
 );
 
-const navStyle = { color: 'white', textDecoration: 'none', padding: '10px', borderRadius: '5px', transition: '0.3s', backgroundColor: 'rgba(255,255,255,0.05)' };
-
-// --- صفحة نقطة البيع (POS) المستعادة ---
+// --- محرك نقطة البيع (POS Engine) - الخطوة الأولى ---
 const POSPage = () => {
   const [cart, setCart] = useState([]);
-  // هنا سنضع لاحقاً كود الحسابات والبيع الذي استخرجناه من ملفك الأصلي
+  const [discount, setDiscount] = useState(0);
+
+  // بيانات افتراضية للمنتجات (سيتم ربطها لاحقاً بملف المنتجات الخاص بك)
+  const products = [
+    { id: 1, name: 'زبادي هنا 400 جرام', price: 450, barcode: '101' },
+    { id: 2, name: 'دقيق السنابل 5 كيلو', price: 3800, barcode: '102' },
+    { id: 3, name: 'سكر السعيد 1 كيلو', price: 1200, barcode: '103' },
+  ];
+
+  const addToCart = (product) => {
+    const isExist = cart.find(item => item.id === product.id);
+    if (isExist) {
+      setCart(cart.map(item => item.id === product.id ? { ...item, qty: item.qty + 1 } : item));
+    } else {
+      setCart([...cart, { ...product, qty: 1 }]);
+    }
+  };
+
+  const total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+  const netTotal = total - discount;
+
   return (
     <div>
-      <h3 style={{ color: '#1a222d' }}>💰 واجهة البيع السريع</h3>
-      <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
-        <div style={{ flex: 2, border: '1px dashed #ccc', padding: '20px', borderRadius: '8px' }}>
-          <h4>قائمة المنتجات</h4>
-          <input type="text" placeholder="بحث عن منتج أو باركود..." style={{ width: '100%', padding: '10px', marginBottom: '10px' }} />
-          <p style={{ color: '#888' }}>سيتم عرض المنتجات هنا فور ربط قاعدة البيانات.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h3 style={{ margin: 0, color: '#0f172a' }}>💰 واجهة البيع السريع</h3>
+        <button onClick={() => setCart([])} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>تفريغ السلة 🗑️</button>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '30px' }}>
+        {/* قسم اختيار السلع */}
+        <div style={{ border: '1px solid #f1f5f9', padding: '15px', borderRadius: '12px' }}>
+          <input type="text" placeholder="ابحث باسم المنتج أو الباركود..." style={inputStyle} />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '15px', marginTop: '20px' }}>
+            {products.map(p => (
+              <div key={p.id} onClick={() => addToCart(p)} style={itemCardStyle}>
+                <div style={{ fontWeight: 'bold' }}>{p.name}</div>
+                <div style={{ color: '#10b981', marginTop: '5px' }}>{p.price} ر.ي</div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div style={{ flex: 1, backgroundColor: '#f8fafc', padding: '20px', borderRadius: '8px' }}>
-          <h4>الفاتورة الحالية</h4>
-          <hr />
-          <div style={{ marginTop: '50px', textAlign: 'center' }}>
-            <h2 style={{ color: '#2ecc71' }}>الإجمالي: 0.00 ر.ي</h2>
-            <button style={{ width: '100%', padding: '15px', backgroundColor: '#2ecc71', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>إتمام البيع (F10)</button>
+
+        {/* قسم الحسابات والفاتورة */}
+        <div style={{ backgroundColor: '#f8fafc', padding: '20px', borderRadius: '12px' }}>
+          <h4 style={{ margin: '0 0 15px 0', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px' }}>ملخص الفاتورة</h4>
+          <div style={{ minHeight: '250px' }}>
+            {cart.length === 0 ? <p style={{ textAlign: 'center', color: '#94a3b8', marginTop: '50px' }}>السلة فارغة</p> : 
+              cart.map(item => (
+                <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px' }}>
+                  <span>{item.name} (x{item.qty})</span>
+                  <span>{(item.price * item.qty).toLocaleString()}</span>
+                </div>
+              ))
+            }
+          </div>
+          <div style={{ borderTop: '2px solid #e2e8f0', paddingTop: '15px' }}>
+            <div style={priceRow}><span>الإجمالي:</span> <span>{total.toLocaleString()} ر.ي</span></div>
+            <div style={priceRow}><span>الخصم:</span> <input type="number" value={discount} onChange={(e) => setDiscount(Number(e.target.value))} style={{ width: '70px', borderRadius: '4px', border: '1px solid #cbd5e1' }} /></div>
+            <div style={{ ...priceRow, fontSize: '22px', fontWeight: 'bold', color: '#059669', marginTop: '10px' }}>
+              <span>الصافي:</span> <span>{netTotal.toLocaleString()} ر.ي</span>
+            </div>
+            <button style={btnPay} onClick={() => alert('تم إتمام العملية بنجاح!')}>تأفيذ البيع (F10)</button>
           </div>
         </div>
       </div>
@@ -54,18 +106,22 @@ const POSPage = () => {
   );
 };
 
+// --- المكونات الباقية كواجهات مؤقتة ---
 const Dashboard = () => (
-  <div>
-    <h3>لوحة التحكم الرئيسية</h3>
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginTop: '20px' }}>
-      <div style={statCard}>💰 مبيعات اليوم: 0</div>
-      <div style={statCard}>📦 المنتجات: 0</div>
-      <div style={statCard}>👤 العملاء: 0</div>
-    </div>
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+    <div style={{ ...statBox, borderRight: '5px solid #3b82f6' }}><h4>مبيعات اليوم</h4><h2>0 ر.ي</h2></div>
+    <div style={{ ...statBox, borderRight: '5px solid #10b981' }}><h4>عدد الطلبات</h4><h2>0</h2></div>
+    <div style={{ ...statBox, borderRight: '5px solid #f59e0b' }}><h4>المنتجات النشطة</h4><h2>0</h2></div>
   </div>
 );
 
-const statCard = { padding: '30px', backgroundColor: '#eef2ff', borderRadius: '10px', textAlign: 'center', fontWeight: 'bold', color: '#4338ca' };
+// --- التنسيقات (Styles) ---
+const navItemStyle = { color: '#94a3b8', textDecoration: 'none', padding: '12px 15px', borderRadius: '8px', transition: '0.3s' };
+const inputStyle = { width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', outline: 'none' };
+const itemCardStyle = { padding: '15px', border: '1px solid #f1f5f9', borderRadius: '10px', textAlign: 'center', cursor: 'pointer', backgroundColor: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' };
+const priceRow = { display: 'flex', justifyContent: 'space-between', marginBottom: '8px' };
+const btnPay = { width: '100%', padding: '15px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '10px', marginTop: '20px', cursor: 'pointer', fontSize: '18px', fontWeight: 'bold' };
+const statBox = { padding: '20px', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' };
 
 export default function App() {
   return (
@@ -74,7 +130,6 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="pos" element={<POSPage />} />
-          <Route path="products" element={<div><h3>إدارة المنتجات</h3><p>جاري استعادة البيانات...</p></div>} />
           <Route path="*" element={<Dashboard />} />
         </Route>
       </Routes>
