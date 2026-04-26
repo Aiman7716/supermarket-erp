@@ -1,4 +1,5 @@
 // --- محرك نقطة البيع المتطور ---
+import { useState } from 'react';
 const POSPage = () => {
   const [cart, setCart] = useState([]);
   const [discount, setDiscount] = useState(0);
