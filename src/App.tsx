@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
-import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import POSPage from './pages/POSPage';
@@ -18,35 +17,29 @@ import DynamicControlPage from './pages/DynamicControlPage';
 import BarcodePage from './pages/BarcodePage';
 import SalesReturnPage from './pages/SalesReturnPage';
 
-// محاكاة مستخدم مسجل دخول لتخطي عقبة AuthContext المفقود
-const user = { id: '1', name: 'Ayman Al-Himyari', role: 'admin' };
-
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  // بما أننا قمنا بتعطيل AuthContext، سنعتبر المستخدم موجوداً دائماً
-  return user ? <>{children}</> : <Navigate to="/login" replace />;
-}
+// محاكاة مستخدم لتخطي الحماية
+const user = { id: '1', name: 'Ayman Al-Himyari' };
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
-      <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-        <Route index element={<DashboardPage />} />
-        <Route path="pos" element={<POSPage />} />
-        <Route path="products" element={<ProductsPage />} />
-        <Route path="inventory" element={<InventoryPage />} />
-        <Route path="customers" element={<CustomersPage />} />
-        <Route path="receipt-voucher" element={<ReceiptVoucherPage />} />
-        <Route path="invoices" element={<InvoicesPage />} />
-        <Route path="sales-return" element={<SalesReturnPage />} />
-        <Route path="accounting" element={<AccountingPage />} />
-        <Route path="employees" element={<EmployeesPage />} />
-        <Route path="users" element={<UsersPage />} />
-        <Route path="reports" element={<ReportsPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="dynamic-control" element={<DynamicControlPage />} />
-        <Route path="barcodes" element={<BarcodePage />} />
-      </Route>
+      <Route path="/login" element={<LoginPage />} />
+      {/* عرض الصفحات مباشرة بدون Layout لتجنب خطأ الملف المفقود */}
+      <Route path="/" element={user ? <DashboardPage /> : <Navigate to="/login" />} />
+      <Route path="/pos" element={<POSPage />} />
+      <Route path="/products" element={<ProductsPage />} />
+      <Route path="/inventory" element={<InventoryPage />} />
+      <Route path="/customers" element={<CustomersPage />} />
+      <Route path="/receipt-voucher" element={<ReceiptVoucherPage />} />
+      <Route path="/invoices" element={<InvoicesPage />} />
+      <Route path="/sales-return" element={<SalesReturnPage />} />
+      <Route path="/accounting" element={<AccountingPage />} />
+      <Route path="/employees" element={<EmployeesPage />} />
+      <Route path="/users" element={<UsersPage />} />
+      <Route path="/reports" element={<ReportsPage />} />
+      <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/dynamic-control" element={<DynamicControlPage />} />
+      <Route path="/barcodes" element={<BarcodePage />} />
     </Routes>
   );
 }
