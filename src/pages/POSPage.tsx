@@ -1,21 +1,21 @@
-// --- محرك نقطة البيع المتطور ---
-import { useState } from 'react';
-export default function POSPage() {
+import React, { useState, useEffect } from 'react';
 
-  const [cart, setCart] = useState([]);
+// التعديل الذهبي: التصدير الافتراضي ليعمل مع App.tsx
+export default function POSPage() {
+  const [cart, setCart] = useState<any[]>([]);
   const [discount, setDiscount] = useState(0);
 
-  // مصفوفة تجريبية للمنتجات (سنقوم لاحقاً بربطها بقاعدة بياناتك)
-  const products = [
+  // مصفوفة تجريبية (سيتم ربطها لاحقاً بصفحة الأصناف)
+  const [products] = useState([
     { id: 1, name: 'حليب نيدو 400 جرام', price: 2500, barcode: '101' },
     { id: 2, name: 'أرز بسمتي 5 كيلو', price: 8000, barcode: '102' },
     { id: 3, name: 'زيت طبخ 1.5 لتر', price: 3200, barcode: '103' },
-  ];
+  ]);
 
-  const addToCart = (product) => {
+  const addToCart = (product: any) => {
     const existing = cart.find(item => item.id === product.id);
     if (existing) {
-      setCart(cart.map(item => item.id === product.id ? {...item, qty: item.qty + 1} : item));
+      setCart(cart.map(item => item.id === product.id ? { ...item, qty: item.qty + 1 } : item));
     } else {
       setCart([...cart, { ...product, qty: 1 }]);
     }
@@ -25,50 +25,71 @@ export default function POSPage() {
   const finalTotal = total - discount;
 
   return (
-    <div style={{ direction: 'rtl' }}>
-      <h3 style={{ color: '#1e293b', marginBottom: '20px' }}>💰 محرك البيع الذكي - POS Engine</h3>
-      
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
+    <div className="flex flex-col space-y-6">
+      {/* تم إزالة العناوين المكررة لأنها موجودة في القائمة الجانبية */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
         {/* قسم اختيار المنتجات */}
-        <div style={{ backgroundColor: '#fff', border: '1px solid #e2e8f0', padding: '15px', borderRadius: '12px' }}>
-          <input type="text" placeholder="أدخل الباركود أو اسم المنتج..." style={inputStyle} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '10px', marginTop: '15px' }}>
+        <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+          <input 
+            type="text" 
+            placeholder="أدخل الباركود أو اسم المنتج..." 
+            className="w-full p-3 mb-6 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {products.map(p => (
-              <button key={p.id} onClick={() => addToCart(p)} style={productButtonStyle}>
-                {p.name}<br/><b>{p.price} ر.ي</b>
+              <button 
+                key={p.id} 
+                onClick={() => addToCart(p)}
+                className="p-4 border border-slate-100 rounded-xl hover:bg-blue-50 hover:border-blue-200 transition text-right"
+              >
+                <div className="font-bold text-slate-800">{p.name}</div>
+                <div className="text-blue-600 font-bold mt-1">{p.price} ر.ي</div>
               </button>
             ))}
           </div>
         </div>
 
         {/* قسم الفاتورة والحسابات */}
-        <div style={{ backgroundColor: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-          <h4 style={{ borderBottom: '2px solid #cbd5e1', paddingBottom: '10px' }}>تفاصيل الفاتورة</h4>
-          <div style={{ minHeight: '200px', marginTop: '10px' }}>
+        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col h-fit">
+          <h4 className="text-xl font-bold mb-4 border-bottom pb-2 border-slate-300">تفاصيل الفاتورة</h4>
+          <div className="flex-grow min-h-[300px]">
             {cart.map(item => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px' }}>
-                <span>{item.name} (x{item.qty})</span>
-                <span>{(item.price * item.qty).toLocaleString()} ر.ي</span>
+              <div key={item.id} className="flex justify-between items-center mb-3 text-sm">
+                <span className="font-medium">{item.name} (x{item.qty})</span>
+                <span className="font-bold">{(item.price * item.qty).toLocaleString()} ر.ي</span>
               </div>
             ))}
           </div>
-          
-          <div style={{ marginTop: '20px', borderTop: '2px solid #cbd5e1', paddingTop: '15px' }}>
-            <div style={calcRow}><span>الإجمالي:</span> <span>{total.toLocaleString()} ر.ي</span></div>
-            <div style={calcRow}><span>الخصم:</span> <input type="number" value={discount} onChange={(e) => setDiscount(Number(e.target.value))} style={{ width: '80px', textAlign: 'center' }} /></div>
-            <div style={{ ...calcRow, fontSize: '20px', color: '#10b981', fontWeight: 'bold' }}>
-              <span>الصافي:</span> <span>{finalTotal.toLocaleString()} ر.ي</span>
+
+          <div className="mt-6 pt-4 border-t border-slate-300 space-y-2">
+            <div className="flex justify-between text-slate-600">
+              <span>الإجمالي:</span>
+              <span>{total.toLocaleString()} ر.ي</span>
             </div>
-            <button style={payButtonStyle} onClick={() => alert('تم إرسال الفاتورة للطابعة واحتسابها في المخزن')}>إتمام العملية (F10)</button>
+            <div className="flex justify-between items-center">
+              <span>الخصم:</span>
+              <input 
+                type="number" 
+                value={discount} 
+                onChange={(e) => setDiscount(Number(e.target.value))}
+                className="w-20 p-1 border rounded text-center"
+              />
+            </div>
+            <div className="flex justify-between text-xl font-bold text-blue-700 pt-2">
+              <span>الصافي:</span>
+              <span>{finalTotal.toLocaleString()} ر.ي</span>
+            </div>
           </div>
+
+          <button 
+            className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl mt-6 hover:bg-blue-700 shadow-lg shadow-blue-100 transition"
+            onClick={() => alert('تم إرسال الفاتورة للطابعة')}
+          >
+            إتمام العملية (F10)
+          </button>
         </div>
       </div>
     </div>
   );
-};
-
-// تنسيقات سريعة (Styles)
-const inputStyle = { width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', marginBottom: '10px' };
-const productButtonStyle = { padding: '15px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#fff', cursor: 'pointer', textAlign: 'center', transition: '0.2s' };
-const calcRow = { display: 'flex', justifyContent: 'space-between', marginBottom: '10px' };
-const payButtonStyle = { width: '100%', padding: '15px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '8px', marginTop: '15px', cursor: 'pointer', fontSize: '18px', fontWeight: 'bold' };
+}
