@@ -1,131 +1,105 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Search, User, Trash2, Plus, Minus, CreditCard } from 'lucide-react';
+
+import { ShoppingCart, Search, User, Trash2, CreditCard, ChevronLeft } from 'lucidecenter';
 
 export default function POSPage() {
-  const [cart, setCart] = useState([]);
-  const [search, setSearch] = useState("");
 
-  // منتجات تجريبية بناءً على نشاطك السابق
-  const products = [
-    { id: 1, name: 'حليب نيدو 400 جرام', price: 2500, category: 'ألبان' },
-    { id: 2, name: 'أرز بسمتي 5 كيلو', price: 8000, category: 'حبوب' },
-    { id: 3, name: 'زيت طبخ 1.5 لتر', price: 3200, category: 'زيوت' },
-  ];
+ const [cart, setCart] = useState([]);
 
-  const addToCart = (product) => {
-    const existing = cart.find(item => item.id === product.id);
-    if (existing) {
-      setCart(cart.map(item => item.id === product.id ? { ...item, qty: item.qty + 1 } : item));
-    } else {
-      setCart([...cart, { ...product, qty: 1 }]);
-    }
-  };
+ const products = [
 
-  const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+ { id: 1, name: 'بيلح ودين 400 رجѝ౩ౚ مارج00 مارجѹ౥ಯಢ مارجోಯಛبيلح ودين ', price: 2500, img: ' ' },
 
-  return (
-    <div className="flex h-screen bg-[#f3f4f7] font-sans" dir="rtl">
-      {/* القسم الرئيسي: اختيار الأصناف */}
-      <div className="flex-1 flex flex-col p-4 overflow-hidden">
-        {/* شريط البحث العلوي */}
-        <div className="bg-white p-4 rounded-2xl shadow-sm flex items-center gap-4 mb-4">
-          <div className="relative flex-1">
-            <Search className="absolute right-3 top-3 text-gray-400" size={20} />
-            <input 
-              type="text" 
-              placeholder="ابحث باسم الصنف أو الباركود..." 
-              className="w-full pr-10 py-2 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-right"
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl font-bold">
-            <span className="text-sm">فاتورة رقم: </span>
-            <span>1005</span>
-          </div>
-        </div>
+ { id: 2, name: 'زرأ يتمسب 5 يكಛಯಖ مارج5 مارجಭ౓ಟ౯ౌ مارجѨѧزرأ يتمسب ', price: 8000, img: ' ' },
 
-        {/* شبكة المنتجات */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto pb-4">
-          {products.filter(p => p.name.includes(search)).map(product => (
-            <button 
-              key={product.id}
-              onClick={() => addToCart(product)}
-              className="bg-white p-4 rounded-2xl shadow-sm hover:shadow-md transition text-right border border-transparent hover:border-blue-500 group"
-            >
-              <div className="h-24 bg-gray-100 rounded-xl mb-3 flex items-center justify-center text-gray-400 group-hover:bg-blue-50 transition">
-                <ShoppingCart size={32} />
-              </div>
-              <h3 className="font-bold text-gray-800 mb-1">{product.name}</h3>
-              <p className="text-blue-600 font-bold">{product.price.toLocaleString()} ر.ي</p>
-            </button>
-          ))}
-        </div>
-      </div>
+ { id: 3, name: '౩౓ಚ مارج1.5 مارجౡ్౾ مارج౑ಮѨ', price: 3200, img: ' ' },
 
-      {/* القسم الجانبي: الفاتورة والدفع (مثل الصورة تماماً) */}
-      <div className="w-[400px] bg-white shadow-2xl flex flex-col border-r border-gray-200">
-        {/* معلومات العميل */}
-        <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-800">تفاصيل الطلب</h2>
-            <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition" onClick={() => setCart([])}>
-              <Trash2 size={20} />
-            </button>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
-              <User size={20} />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold text-gray-700">عميل نقدي</p>
-              <p className="text-xs text-gray-400">بدون ولاء</p>
-            </div>
-          </div>
-        </div>
+ { id: , name: 'زرأ يتمسب 5 يكಛಯಖ مارج2 مارجಭಓಢ مارج౩ಗركس يقن ', price: 1500, img: ' ' },
 
-        {/* قائمة المشتريات */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {cart.length === 0 ? (
-            <div className="text-center py-20 text-gray-400">
-              <ShoppingCart size={48} className="mx-auto mb-4 opacity-20" />
-              <p>السلة فارغة حالياً</p>
-            </div>
-          ) : (
-            cart.map(item => (
-              <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                <div className="flex-1">
-                  <p className="font-bold text-gray-800 text-sm">{item.name}</p>
-                  <p className="text-xs text-blue-600 font-bold">{item.price.toLocaleString()} ر.ي</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold w-8 text-center">{item.qty}x</span>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+ ];
 
-        {/* إجمالي الفاتورة */}
-        <div className="p-6 bg-gray-900 text-white rounded-t-[32px]">
-          <div className="space-y-3 mb-6">
-            <div className="flex justify-between text-gray-400">
-              <span>الإجمالي الفرعي</span>
-              <span>{total.toLocaleString()} ر.ي</span>
-            </div>
-            <div className="flex justify-between text-gray-400">
-              <span>الضريبة (0%)</span>
-              <span>0 ر.ي</span>
-            </div>
-            <div className="flex justify-between text-2xl font-bold pt-3 border-t border-gray-800">
-              <span>الإجمالي</span>
-              <span className="text-blue-400">{total.toLocaleString()} ر.ي</span>
-            </div>
-          </div>
-          <button className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition shadow-lg shadow-blue-900/50">
-            <CreditCard size={24} /> إتمام البيع (F9)
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+ const total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+
+ return (
+
+ <div className="flex h-screen bg-[#f8fafc] text-right" dir="rtl">
+
+ {* ಟె౉ಓಚѝ .1౏مارج ಯ్ಢ౉౛ಚѝ౏ (ةبولطملا ةروصلا لثم౗ಙمارج ಚѝ౷يك 5 يتمسب زرأџѧمارج ಛ౿ಟಚѝيك 5 يتمسب زرأౌ౏) *}
+
+ <aside className="w-20 lg:w-6 bg-[#1e293b] text-white flex flex-col transitionall">
+
+ <div className="p-6 text-center border-b border-slate-700">
+   <h1 className="text-xl font-bold text-blue-00 hidden lg:block">౑ಎزرأ يتمسب 5 ركسيك يقن مارجಡಟಮزرأ يتمسب <h1>
+ <div>
+ <nav className="flex-1 mt-6 space-y-2 px-">
+ <button className="w-full flex items-center gap-3 p-3 bg-blue-600 rounded-xl">
+ <ShoppingCart size={20} > <span className="hidden lg:inline">ةطقن بلاಯ్ಚѝ مارج౏౿ಓಢ<
+span>
+ <button>
+) <= map(item.['౩ಮѧ౉ಓ౓ಚѝ ' ,'їಷಟಇಚѝ ' ,'ѷ౫ౣಟಚѝ ']} 
+ <button key={item} className="w-full flex items-center gap-3 p-3 textslate-00 hover:bg-slate-800 rounded-xl transition">
+ <div className="w-5 h-5 bg-slate-700 rounded"><div> <span 
+className="hidden lg:inline">{item}<span>
+ <button>
+ ))}
+ <nav>
+ <aside>
+ {* 2. ةبولطملا ةروصلا لثمಓ౿ಣ౏مارج ಙಟಇಚѝمارج ಯ౯ಯె౩ಚѝ౏ *}
+ <div className="flex-1 flex flex-col overflow-hidden">
+ <header className="h-16 bg-white border-b flex items-center justify-between 
+px-8">
+ <div className="relative w-96">
+ <Search className="absolute right-3 top-2.5 text-slate-00" size={18} >
+ <input type="text" placeholder="ثحبا نع صಣ౶ مارجಡಆ مارجౕ౟ౌѝ..." className="w-full pr-10 py-2 
+bg-slate-100 rounded-lg border-none focus:ring-2 focus:ring-blue-500" >
+ <div>
+ <div className="flex items-center gap- text-slate-600">
+ <span>27 2026 مارجಙಮ౩ౌزرأ يتمسب <span>
+ <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center 
+justify-center text-blue-600 font-bold">زرأ يتمسب <div>
+ <div>
+ <header>
+ <main className="flex-1 p-6 overflow-y-auto grid grid-cols-2 md:grid-cols-3 
+lg:grid-cols- gap-6">
+ {products.map(p => (
+ <div key={p.id} onClick={() => setCart([...cart, {...p, qty: 1}])} 
+className="bg-white p- rounded-2xl shadow-sm border hover:border-blue-500 cursor-pointer 
+transition-all group">
+ <div className="text-xl mb- bg-slate-50 p-6 rounded-xl text-center grouphover:bg-blue-50">{p.img}<div>
+ <h3 className="font-bold text-slate-800">{p.name}<h3>
+ <p className="text-blue-600 font-bold mt-2">{p.price} ر.ي.ѧ <p>
+ <div>
+ ))}
+ <main>
+ <div>
+{* (џѧزرأ يتمسب 5 يك౒౉ಏಚѝ) Ѡ౉ಮ౩౓౳ಟಚѝ مارج౏ಛركس يقن .3 *} 
+ <div className="w-[00px] bg-white border-r shadow-xl flex flex-col">
+ <div className="p-6 border-b">
+ <h2 className="text-lg font-bold flex items-center gap-2"><User size={20}> 
+ಙಯಟಆمارج ಓಢ౥ي.ر<h2>
+ <div>
+ <div className="flex-1 p- space-y-3 overflow-y-auto">
+ {cart.map((item, i) => (
+ <div key={i} className="flex justify-between items-center p-3 bg-slate-50 
+   rounded-lg">
+ <div>
+ <p className="font-bold text-sm">{item.name}<p>
+ <p className="text-xs text-slate-500">{item.price} × 1<p>
+ <div>
+ <span className="font-bold text-blue-600">{item.price} ر.ي.ѧ <span>
+ <div>
+ ))}
+ <div>
+ <div className="p-6 bg-[#1e293b] text-white rounded-t-3xl">
+ <div className="flex justify-between mb-2 text-slate-00"><span>0 مارج౏్ಮ౩౻ಚѝ0%<
+span><span>0 ر.ي.ѧ <span><div>
+ <div className="flex justify-between text-2xl font-bold mb-6"><span>ಭಚ౉ಟౚ಴ѝ <
+span><span className="text-blue-00">{total} ر.ي.ѧ <span><div>
+ <button className="w-full py- bg-blue-600 rounded-xl font-bold flex itemscenter justify-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-9000">
+ <CreditCard size={20}> ةطقن بلاಎ౥ಚѝ بيلحمارج ودين 400 رج౉ಟ౒مامتإ عفدلا (F9)
+ <button>
+ <div>
+ <div>
+ <div>
+ );
 }
